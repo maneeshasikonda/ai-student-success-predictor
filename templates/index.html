@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AI Student Success Predictor</title>
+<style>
+body{font-family:Arial; background:#f4f4ff; padding:20px}
+.card{background:white; padding:20px; border-radius:10px; margin-bottom:20px; box-shadow:0 2px 5px #ccc}
+input, select{padding:8px; margin:5px; width:180px}
+button{padding:10px 20px; background:#8B5CF6; color:white; border:none; border-radius:5px; cursor:pointer}
+.result{font-size:20px; font-weight:bold; margin-top:15px}
+</style>
+</head>
+<body>
+<h1>🎓 AI Student Success Predictor - DAS007662</h1>
+<div class="card">
+<h3>Model Performance (Accuracy)</h3>
+<p>Random Forest: {{ (results['Random Forest']['accuracy']*100)|round(2) }}% | Logistic Regression: {{ (results['Logistic Regression']['accuracy']*100)|round(2) }}%</p>
+<p>Total Students: {{ total_students }}</p>
+</div>
+
+<div class="card">
+<h3>🔮 Predict Student Success</h3>
+<input id="cgpa" placeholder="CGPA (4-9.5)" type="number">
+<input id="attendance" placeholder="Attendance %" type="number">
+<input id="hours_studied" placeholder="Hours Studied" type="number">
+<input id="projects_completed" placeholder="Projects" type="number">
+<input id="certifications" placeholder="Certifications" type="number"><br>
+<select id="internship"><option>Yes</option><option>No</option></select>
+<select id="study_consistency"><option>High</option><option>Medium</option><option>Low</option></select>
+<button onclick="predict()">Predict Now</button>
+<div id="result" class="result"></div>
+</div>
+
+<script>
+async function predict(){
+ const data = {
+   age: 20, year_of_study: 3, previous_gpa: 7.5, online_courses: 3,
+   cgpa: parseFloat(document.getElementById('cgpa').value),
+   attendance: parseFloat(document.getElementById('attendance').value),
+   hours_studied: parseFloat(document.getElementById('hours_studied').value),
+   projects_completed: parseInt(document.getElementById('projects_completed').value),
+   certifications: parseInt(document.getElementById('certifications').value),
+   internship_experience: document.getElementById('internship').value,
+   study_consistency: document.getElementById('study_consistency').value
+ };
+ const res = await fetch('/predict',{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)});
+ const out = await res.json();
+ document.getElementById('result').innerHTML = `Success: ${out.success? '✅ Yes' : '⚠️ No'} | Probability: ${out.probability}% | Risk: ${out.risk_level}`;
+}
+</script>
+</body>
+</html>
